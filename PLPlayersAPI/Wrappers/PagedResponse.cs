@@ -11,24 +11,18 @@
 
         public PagedResponse(List<T> data, int count, int pageNumber, int pageSize)
         {
-            CurrentPage = pageNumber;
             PageSize = pageSize;
-            TotalPages = (int)Math.Ceiling(count/(double)pageSize);
+            TotalPages = (int)Math.Ceiling(count / (double)pageSize);
             TotalRecords = count;
+
+            CurrentPage = pageNumber > TotalPages ? TotalPages : pageNumber;
+            CurrentPage = CurrentPage < 1 ? 1 : CurrentPage;
 
             HasPrevious = CurrentPage > 1;
             HasNext = CurrentPage < TotalPages;
 
-            AddRange(data);
+            AddRange(data.Skip((CurrentPage - 1) * PageSize).Take(PageSize));
         }
-
-        public static PagedResponse<T> ToPagedResponse(List<T> data, int pageNumber, int pageSize)
-        {
-            var count = data.Count();
-            var items = data.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-
-            return new PagedResponse<T>(items, count, pageNumber, pageSize);
-        }
-
     }
+
 }

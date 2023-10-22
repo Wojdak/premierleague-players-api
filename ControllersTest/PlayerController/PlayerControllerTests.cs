@@ -50,7 +50,7 @@ namespace ControllersTests
                     } 
                 };
 
-            var pagedResponse = PagedResponse<PlayerDTO>.ToPagedResponse(playersDto, paginationFilters.PageNumber, paginationFilters.PageSize);
+            var pagedResponse = new PagedResponse<PlayerDTO>(playersDto, playersDto.Count, paginationFilters.PageNumber, paginationFilters.PageSize);
 
             A.CallTo(() => _playerService.GetAllPlayersAsync(paginationFilters, playerFilter))
                 .Returns(pagedResponse);

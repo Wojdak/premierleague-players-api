@@ -29,7 +29,7 @@ namespace PLPlayersAPI.Services.PlayerServices
             var players = await filteredQuery.ToListAsync();
             var playerDTOs = players.Select(_mapper.Map<Player, PlayerDTO>).ToList();
 
-            return PagedResponse<PlayerDTO>.ToPagedResponse(playerDTOs, validPagination.PageNumber, validPagination.PageSize);
+            return new PagedResponse<PlayerDTO>(playerDTOs, playerDTOs.Count, validPagination.PageNumber, validPagination.PageSize);
         }
 
         private IQueryable<Player> BuildFilteredQuery(PlayerFilter playerFilter)
