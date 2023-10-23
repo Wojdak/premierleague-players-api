@@ -67,5 +67,46 @@ namespace PLPlayersAPI.Services.PlayerServices
 
             return playerDTO;
         }
+
+        public async Task<int?> AddPlayerAsync(Player player)
+        {
+            _context.Players.Add(player);
+            await _context.SaveChangesAsync();
+
+            return player.PlayerId;
+        }
+
+        public async Task<int?> UpdatePlayerAsync(int playerId, Player _player)
+        {
+            var player = await _context.Players.FindAsync(playerId);
+
+            if (player == null)
+                return null; 
+
+            player.FirstName = _player.FirstName;
+            player.LastName = _player.LastName;
+            player.ImgSrc = _player.ImgSrc;
+            player.DateOfBirth = _player.DateOfBirth; 
+            player.ClubId = _player.ClubId;
+            player.NationalityId = _player.NationalityId;
+            player.PositionId = _player.PositionId;
+
+
+            await _context.SaveChangesAsync();
+            return player.PlayerId;
+        }
+
+        public async Task<bool> DeletePlayerAsync(int playerId)
+        {
+            var player = await _context.Players.FindAsync(playerId);
+
+            if (player == null)
+                return false; 
+
+            _context.Players.Remove(player);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
     }
 }

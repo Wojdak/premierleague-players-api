@@ -13,6 +13,9 @@ namespace PLPlayersAPI.Mapper
             CreateMap<Club, ClubDTO>();
             CreateMap<Nationality, NationalityDTO>();
             CreateMap<Position, PositionDTO>();
+            CreateMap<UserDTO, User>()
+               .ForMember(dest => dest.PasswordHash, opt => opt.MapFrom(src => BCrypt.Net.BCrypt.HashPassword(src.Password)))
+               .ForMember(dest => dest.Role, opt => opt.MapFrom(src => "Standard"));
         }
     }
 }
