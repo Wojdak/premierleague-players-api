@@ -1,14 +1,17 @@
+using FluentValidation;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PLPlayersAPI.Data;
+using PLPlayersAPI.Models.DTOs;
 using PLPlayersAPI.Services.ClubServices;
 using PLPlayersAPI.Services.NationalityServices;
 using PLPlayersAPI.Services.PlayerServices;
 using PLPlayersAPI.Services.PositionServices;
 using PLPlayersAPI.Services.UserServices;
+using PLPlayersAPI.Validators;
 using System.Security.Claims;
 using System.Text;
 
@@ -62,6 +65,8 @@ namespace PLPlayersAPI
             builder.Services.AddScoped<IPositionService, PositionService>();
             builder.Services.AddScoped<INationalityService, NationalityService>();
             builder.Services.AddScoped<IUserService, UserService>();
+
+            builder.Services.AddScoped<IValidator<UserDTO>, UserValidator>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x =>
             {

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PLPlayersAPI.Filters;
 using PLPlayersAPI.Models.DTOs;
 using PLPlayersAPI.Services.UserServices;
 
@@ -10,29 +12,43 @@ namespace PLPlayersAPI.Controllers
     public class UserController : ControllerBase
     {
         private readonly IUserService _userService;
+        private IValidator<UserDTO> _validator;
 
-        public UserController(IUserService userService)
+        public UserController(IUserService userService, IValidator<UserDTO> validator)
         {
             _userService = userService;
+            _validator = validator;
         }
 
         [HttpPost("login")]
         public async Task<IActionResult> Login([FromBody] UserDTO userDTO)
         {
-            var token = await _userService.LoginUser(userDTO);
+            var validationResult = await _validator.ValidateAsync(userDTO);
 
-            if (token is null)
-                return NotFound("User not found");
+            if (validationResult.IsValid){
+                var token = await _userService.LoginUser(userDTO);
 
-            return Ok(token);
+                if (token is null)
+                    return NotFound("User not found");
+
+                return Ok(token);
+            }
+
+            return BadRequest(validationResult.Errors);
         }
 
         [HttpPost("register")]
         public async Task<IActionResult> Register([FromBody] UserDTO userDTO)
         {
-            await _userService.RegisterUser(userDTO);
+            var validationResult = await _validator.ValidateAsync(userDTO);
 
-            return Ok("Account was successfully created");
+            if (validationResult.IsValid) {
+                await _userService.RegisterUser(userDTO);
+
+                return Ok("Account was successfully created");
+            }
+
+            return BadRequest(validationResult.Errors);
         }
     }
 }
