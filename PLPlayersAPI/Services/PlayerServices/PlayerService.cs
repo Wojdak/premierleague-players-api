@@ -68,7 +68,7 @@ namespace PLPlayersAPI.Services.PlayerServices
             return playerDTO;
         }
 
-        public async Task<int?> AddPlayerAsync(Player player)
+        public async Task<int> AddPlayerAsync(Player player)
         {
             _context.Players.Add(player);
             await _context.SaveChangesAsync();

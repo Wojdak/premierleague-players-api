@@ -55,9 +55,6 @@ namespace PLPlayersAPI.Controllers
         {
             var addedPlayerId = await _playerService.AddPlayerAsync(player);
 
-            if (addedPlayerId is null)
-                return BadRequest("Failed to add player");
-
             return CreatedAtAction(nameof(GetPlayerById), new { id = addedPlayerId }, $"Successfully added a new player with id: {addedPlayerId}");
         }
 
