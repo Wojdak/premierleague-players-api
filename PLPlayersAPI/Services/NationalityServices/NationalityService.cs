@@ -3,6 +3,7 @@ using Microsoft.EntityFrameworkCore;
 using PLPlayersAPI.Data;
 using PLPlayersAPI.Models;
 using PLPlayersAPI.Models.DTOs;
+using System.Numerics;
 
 namespace PLPlayersAPI.Services.NationalityServices
 {
@@ -35,6 +36,40 @@ namespace PLPlayersAPI.Services.NationalityServices
             var nationalityDTO = _mapper.Map<Nationality, NationalityDTO>(nationality);
 
             return nationalityDTO;
+        }
+
+        public async Task<int> AddNationalityAsync(Nationality nationality)
+        {
+            _context.Nationalities.Add(nationality);
+            await _context.SaveChangesAsync();
+            return nationality.NationalityId;
+        }
+
+        public async Task<int?> UpdateNationalityAsync(int nationalityId, Nationality _nationality)
+        {
+            var nationality = await _context.Nationalities.FindAsync(nationalityId);
+
+            if (nationality == null)
+                return null;
+
+            nationality.Country = _nationality.Country;
+            nationality.FlagSrc = _nationality.FlagSrc;
+
+            await _context.SaveChangesAsync();
+            return nationality.NationalityId;
+        }
+
+        public async Task<bool> DeleteNationalityAsync(int nationalityId)
+        {
+            var nationality = await _context.Nationalities.FirstOrDefaultAsync(n => n.NationalityId == nationalityId);
+
+            if (nationality is null) 
+                return false;
+
+            _context.Nationalities.Remove(nationality);
+            await _context.SaveChangesAsync();
+
+            return true;
         }
     }
 }

@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using PLPlayersAPI.Models;
 using PLPlayersAPI.Services.PositionServices;
 
 namespace PLPlayersAPI.Controllers
@@ -30,5 +32,39 @@ namespace PLPlayersAPI.Controllers
 
             return position is null ? NotFound("Position with the given Id doesn't exist in the database.") : Ok(position);
         }
+
+        [HttpPost]
+        [Authorize(Policy = "AdministratorPolicy")]
+        public async Task<IActionResult> AddPosition([FromBody] Position position)
+        {
+            var addedPositionId = await _positionService.AddPositionAsync(position);
+
+            return CreatedAtAction(nameof(AddPosition), new { id = addedPositionId }, $"Successfully added a new position with id: {addedPositionId}");
+        }
+
+        [HttpPut("{id}")]
+        [Authorize(Policy = "AdministratorPolicy")]
+        public async Task<IActionResult> UpdatePosition(int id, [FromBody] Position position)
+        {
+            var updatedPositionId = await _positionService.UpdatePositionAsync(id, position);
+
+            if (updatedPositionId is null)
+                return NotFound("Position with the given Id doesn't exist in the database");
+
+            return Ok($"Successfully updated the position with id: {updatedPositionId}");
+        }
+
+        [HttpDelete("{id}")]
+        [Authorize(Policy = "AdministratorPolicy")]
+        public async Task<IActionResult> DeletePosition(int id)
+        {
+            var deleted = await _positionService.DeletePositionAsync(id);
+
+            if (!deleted)
+                return NotFound("Position with the given Id doesn't exist in the database");
+
+            return NoContent();
+        }
+
     }
 }

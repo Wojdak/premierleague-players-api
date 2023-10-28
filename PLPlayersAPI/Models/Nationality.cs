@@ -12,4 +12,9 @@ public partial class Nationality
     public string? FlagSrc { get; set; }
 
     public virtual ICollection<Player> Players { get; set; } = new List<Player>();
+
+    public Nationality()
+    {
+        
+    }
 }

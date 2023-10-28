@@ -55,7 +55,7 @@ namespace PLPlayersAPI.Controllers
         {
             var addedPlayerId = await _playerService.AddPlayerAsync(player);
 
-            return CreatedAtAction(nameof(GetPlayerById), new { id = addedPlayerId }, $"Successfully added a new player with id: {addedPlayerId}");
+            return CreatedAtAction(nameof(AddPlayer), new { id = addedPlayerId }, $"Successfully added a new player with id: {addedPlayerId}");
         }
 
         [HttpPut("{id}")]

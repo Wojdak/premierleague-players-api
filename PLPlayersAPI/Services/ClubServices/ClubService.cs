@@ -38,5 +38,40 @@ namespace PLPlayersAPI.Services.ClubServices
 
             return clubDTO;
         }
+
+        public async Task<int> AddClubAsync(Club club)
+        {
+            _context.Clubs.Add(club);
+            await _context.SaveChangesAsync();
+            return club.ClubId;
+        }
+
+        public async Task<int?> UpdateClubAsync(int clubId, Club _club)
+        {
+            var club = await _context.Clubs.FindAsync(clubId);
+
+            if (club == null)
+                return null;
+
+            club.Name = _club.Name;
+            club.BadgeSrc = _club.BadgeSrc;
+
+            await _context.SaveChangesAsync();
+            return club.ClubId;
+        }
+
+        public async Task<bool> DeleteClubAsync(int clubId)
+        {
+            var club = await _context.Clubs.FirstOrDefaultAsync(c => c.ClubId == clubId);
+
+            if (club is null)
+                return false;
+
+            _context.Clubs.Remove(club);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
     }
 }

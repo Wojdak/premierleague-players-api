@@ -36,5 +36,39 @@ namespace PLPlayersAPI.Services.PositionServices
 
             return positionDTO;
         }
+
+        public async Task<int> AddPositionAsync(Position position)
+        {
+            _context.Positions.Add(position);
+            await _context.SaveChangesAsync();
+            return position.PositionId;
+        }
+
+        public async Task<int?> UpdatePositionAsync(int positionId, Position _position)
+        {
+            var position = await _context.Positions.FindAsync(positionId);
+
+            if (position == null)
+                return null;
+
+            position.Name = _position.Name;
+
+            await _context.SaveChangesAsync();
+            return position.PositionId;
+        }
+
+        public async Task<bool> DeletePositionAsync(int positionId)
+        {
+            var position = await _context.Positions.FirstOrDefaultAsync(p => p.PositionId == positionId);
+
+            if (position is null)
+                return false;
+
+            _context.Positions.Remove(position);
+            await _context.SaveChangesAsync();
+
+            return true;
+        }
+
     }
 }
