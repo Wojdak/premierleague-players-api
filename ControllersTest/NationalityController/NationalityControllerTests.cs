@@ -7,6 +7,7 @@ using System.Text;
 using System.Threading.Tasks;
 using PLPlayersAPI.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
+using PLPlayersAPI.Models;
 
 namespace ControllersTests
 {
@@ -70,6 +71,64 @@ namespace ControllersTests
             //Arrange
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Equal("Nationality with the given Id doesn't exist in the database.", notFoundResult.Value);
+        }
+
+        [Fact]
+        public async Task AddNationality_ValidNationality_ReturnsCreatedAtActionResult()
+        {
+            // Arrange
+            var nationality = new Nationality
+            {
+                NationalityId = 1,
+                Country = "Test",
+                FlagSrc = "Test.png"
+            };
+
+            A.CallTo(() => _nationalityService.AddNationalityAsync(nationality)).Returns(nationality.NationalityId);
+
+            // Act
+            var result = await _controller.AddNationality(nationality);
+
+            // Assert
+            var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+            Assert.Equal($"Successfully added a new nationality with id: {nationality.NationalityId}", createdResult.Value);
+        }
+
+
+        [Fact]
+        public async Task UpdateNationality_ValidNationality_ReturnsOkResult()
+        {
+            // Arrange
+            var nationality = new Nationality
+            {
+                NationalityId = 1,
+                Country = "Test",
+                FlagSrc = "Test.png"
+            };
+
+            A.CallTo(() => _nationalityService.UpdateNationalityAsync(nationality.NationalityId, nationality)).Returns(nationality.NationalityId);
+
+            // Act
+            var result = await _controller.UpdateNationality(nationality.NationalityId, nationality);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal($"Successfully updated the nationality with id: {nationality.NationalityId}", okResult.Value);
+        }
+
+        [Fact]
+        public async Task DeleteNationality_ExistingNationality_ReturnsNoContentResult()
+        {
+            // Arrange
+            int existingNationalityId = 1;
+
+            A.CallTo(() => _nationalityService.DeleteNationalityAsync(existingNationalityId)).Returns(true);
+
+            // Act
+            var result = await _controller.DeleteNationality(existingNationalityId);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
         }
     }
 }

@@ -16,6 +16,8 @@ using PLPlayersAPI.Models.DTOs;
 using PLPlayersAPI.Services.PlayerServices;
 using PLPlayersAPI.Wrappers;
 using PLPlayersAPI.Models;
+using PLPlayersAPI.Services.UserServices;
+using System.Numerics;
 
 namespace ControllersTests
 {
@@ -23,12 +25,12 @@ namespace ControllersTests
     {
         private readonly IPlayerService _playerService;
         private readonly PlayerController _controller;
-    
+
         public PlayerControllerTests()
         {
             _playerService = A.Fake<IPlayerService>();
+
             _controller = new PlayerController(_playerService);
-         
         }
 
         [Fact]
@@ -62,11 +64,9 @@ namespace ControllersTests
 
             _controller.ControllerContext = new ControllerContext { HttpContext = httpContext };
 
-
             // Act
             var result = await _controller.GetPlayers(paginationFilters, playerFilter);
 
-           
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             var players = Assert.IsType <PagedResponse<PlayerDTO>> (okResult.Value);
@@ -87,7 +87,7 @@ namespace ControllersTests
 
             // Assert
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-            Assert.Equal("No data matching the request was found in the database.", notFoundResult.Value);
+            Assert.Equal("No data matching the request was found in the database", notFoundResult.Value);
         }
 
         [Fact]
@@ -133,7 +133,7 @@ namespace ControllersTests
 
             // Assert
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
-            Assert.Equal("Player with the given Id doesn't exist in the database.", notFoundResult.Value);
+            Assert.Equal("Player with the given Id doesn't exist in the database", notFoundResult.Value);
         }
     }
 }

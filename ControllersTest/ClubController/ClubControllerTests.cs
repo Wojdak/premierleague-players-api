@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using PLPlayersAPI.Controllers;
+using PLPlayersAPI.Models;
 using PLPlayersAPI.Models.DTOs;
 using PLPlayersAPI.Services.ClubServices;
 
@@ -67,6 +69,53 @@ namespace ControllersTests
             // Assert
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Equal("Club with the given Id doesn't exist in the database.", notFoundResult.Value);
+        }
+
+        [Fact]
+        public async Task AddClub_ValidClub_ReturnsCreatedAtActionResult()
+        {
+            // Arrange
+            var club = new Club { ClubId=1, BadgeSrc="Test.png", Name="Test.png" };
+
+            A.CallTo(() => _clubService.AddClubAsync(club)).Returns(club.ClubId);
+
+            // Act
+            var result = await _controller.AddClub(club);
+
+            // Assert
+            var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+            Assert.Equal($"Successfully added a new club with id: {club.ClubId}", createdResult.Value);
+        }
+
+        [Fact]
+        public async Task UpdateClub_ValidClub_ReturnsOkResult()
+        {
+            // Arrange
+            var club = new Club { ClubId = 1, BadgeSrc = "Test.png", Name = "Test.png" };
+
+            A.CallTo(() => _clubService.UpdateClubAsync(club.ClubId, club)).Returns(club.ClubId);
+
+            // Act
+            var result = await _controller.UpdateClub(club.ClubId, club);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal($"Successfully updated the club with id: {club.ClubId}", okResult.Value);
+        }
+
+        [Fact]
+        public async Task DeleteClub_ExistingClub_ReturnsNoContentResult()
+        {
+            // Arrange
+            int existingClubId = 1;
+
+            A.CallTo(() => _clubService.DeleteClubAsync(existingClubId)).Returns(true);
+
+            // Act
+            var result = await _controller.DeleteClub(existingClubId);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
         }
     }
 }

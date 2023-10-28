@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using PLPlayersAPI.Controllers;
+using PLPlayersAPI.Models;
 using PLPlayersAPI.Models.DTOs;
 using PLPlayersAPI.Services.PositionServices;
 using System;
@@ -71,6 +72,53 @@ namespace ControllersTests
             //Arrange
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Equal("Position with the given Id doesn't exist in the database.", notFoundResult.Value);
+        }
+
+        [Fact]
+        public async Task AddPosition_ValidPosition_ReturnsCreatedAtActionResult()
+        {
+            // Arrange
+            var position = new Position { PositionId = 1, Name = "test" };
+
+            A.CallTo(() => _positionService.AddPositionAsync(position)).Returns(position.PositionId);
+
+            // Act
+            var result = await _controller.AddPosition(position);
+
+            // Assert
+            var createdResult = Assert.IsType<CreatedAtActionResult>(result);
+            Assert.Equal($"Successfully added a new position with id: {position.PositionId}", createdResult.Value);
+        }
+
+        [Fact]
+        public async Task UpdatePosition_ValidPosition_ReturnsOkResult()
+        {
+            // Arrange
+            var position = new Position { PositionId = 1, Name = "test" };
+
+            A.CallTo(() => _positionService.UpdatePositionAsync(position.PositionId, position)).Returns(position.PositionId);
+
+            // Act
+            var result = await _controller.UpdatePosition(position.PositionId, position);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal($"Successfully updated the position with id: {position.PositionId}", okResult.Value);
+        }
+
+        [Fact]
+        public async Task DeletePosition_ExistingPosition_ReturnsNoContentResult()
+        {
+            // Arrange
+            int existingPositionId = 1;
+
+            A.CallTo(() => _positionService.DeletePositionAsync(existingPositionId)).Returns(true);
+
+            // Act
+            var result = await _controller.DeletePosition(existingPositionId);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
         }
     }
 }
