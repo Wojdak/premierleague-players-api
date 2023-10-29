@@ -11,7 +11,7 @@ WORKDIR /app
 COPY --from=build /app ./
 
 # Define default values for environment variables
-ENV ASPNETCORE_HTTP_PORT=5000
+ENV ASPNETCORE_HTTP_PORT=https://+:5001
 ENV ASPNETCORE_URLS=http://+:5000
 
 ARG ConnectionStrings__PremierLeagueDatabase
