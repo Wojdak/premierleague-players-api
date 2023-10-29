@@ -13,10 +13,16 @@ COPY --from=build /app ./
 # Define default values for environment variables
 ENV ASPNETCORE_HTTP_PORT=5000
 ENV ASPNETCORE_URLS=http://+:5000
-ENV ConnectionStrings__PremierLeagueDatabase = #
-ENV Jwt__Key = #
-ENV Jwt__Issuer = #
-ENV Jwt__Audience = #
+
+ARG ConnectionStrings__PremierLeagueDatabase
+ARG Jwt__Key
+ARG Jwt__Issuer
+ARG Jwt__Audience
+
+ENV ConnectionStrings__PremierLeagueDatabase = $ConnectionStrings__PremierLeagueDatabase
+ENV Jwt__Key = $Jwt__Key
+ENV Jwt__Issuer = $Jwt__Issuer
+ENV Jwt__Audience = $Jwt__Audience
 
 
 EXPOSE 5000
