@@ -92,7 +92,11 @@ namespace PLPlayersAPI
                     policy.RequireClaim(ClaimTypes.Role, "Administrator"));
             });
 
+            builder.Services.AddHealthChecks();
+            
             var app = builder.Build();
+
+            app.MapHealthChecks("/health");
 
             // Configure the HTTP request pipeline.
             if (app.Environment.IsDevelopment())
