@@ -33,6 +33,6 @@ jobs:
       - name: Build and Push the Image
         run : |
           docker login --username ${{ github.actor }} --password ${{ secrets.GH_PT}} ghcr.io
-          docker build . --tag ghcr.io/wojdak/pl-players-api:latest --build-arg ConnectionStrings__PremierLeagueDatabase="${{ secrets.PREMIERLEAGUEDATABASECONNECTION }}"  --build-arg Jwt__Key="${{ secrets.JWTKEY }}" --build-arg Jwt__Issuer="${{ secrets.JWTISSUER }}" --build-arg Jwt__Audience="${{ secrets.JWTAUDIENCE }}"
+          docker build --tag pl-players-api:latest --build-arg ConnectionStrings__PremierLeagueDatabase="${{ secrets.PREMIERLEAGUEDATABASECONNECTION }}"  --build-arg Jwt__Key="${{ secrets.JWTKEY }}" --build-arg Jwt__Issuer="${{ secrets.JWTISSUER }}" --build-arg Jwt__Audience="${{ secrets.JWTAUDIENCE }}" .
           docker push ghcr.io/wojdak/pl-players-api:latest 
   
