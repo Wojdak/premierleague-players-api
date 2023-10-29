@@ -19,10 +19,10 @@ ARG Jwt__Key
 ARG Jwt__Issuer
 ARG Jwt__Audience
 
-ENV ConnectionStrings__PremierLeagueDatabase = $ConnectionStrings__PremierLeagueDatabase
-ENV Jwt__Key = $Jwt__Key
-ENV Jwt__Issuer = $Jwt__Issuer
-ENV Jwt__Audience = $Jwt__Audience
+ENV ConnectionStrings__PremierLeagueDatabase=$ConnectionStrings__PremierLeagueDatabase
+ENV Jwt__Key=$Jwt__Key
+ENV Jwt__Issuer=$Jwt__Issuer
+ENV Jwt__Audience=$Jwt__Audience
 
 
 EXPOSE 5000
