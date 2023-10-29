@@ -1,13 +1,13 @@
 ﻿using PLPlayersAPI.Services.NationalityServices;
 using PLPlayersAPI.Controllers;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using PLPlayersAPI.Models.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using PLPlayersAPI.Models;
+using FluentValidation;
+using FluentValidation.Results;
+using FluentValidation.TestHelper;
+using PLPlayersAPI.Validators;
+using Microsoft.AspNetCore.Http;
 
 namespace ControllersTests
 {
@@ -15,10 +15,12 @@ namespace ControllersTests
     {
         private readonly INationalityService _nationalityService;
         private readonly NationalityController _controller;
+        private IValidator<Nationality> _validator;
         public NationalityControllerTests()
         {
             _nationalityService = A.Fake<INationalityService>();
-            _controller = new NationalityController(_nationalityService);
+            _validator = new NationalityValidator();
+            _controller = new NationalityController(_nationalityService, _validator);
         }
 
         [Fact]
@@ -94,6 +96,26 @@ namespace ControllersTests
             Assert.Equal($"Successfully added a new nationality with id: {nationality.NationalityId}", createdResult.Value);
         }
 
+        [Fact]
+        public async Task AddNationality_InvalidModel_ReturnsBadRequestResult()
+        {
+            // Arrange
+            var nationality = new Nationality
+            {
+                NationalityId = 1,
+                Country = "T",
+                FlagSrc = "Test.png"
+            };
+
+            // Act
+            var validationResult = await _validator.TestValidateAsync(nationality);
+            var result = await _controller.AddNationality(nationality);
+
+            // Assert
+            validationResult.ShouldHaveValidationErrorFor(nationality => nationality.Country);
+            validationResult.Errors.ForEach(e => e.ErrorMessage.Contains("Minimum length of the country is 3 characters"));
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
 
         [Fact]
         public async Task UpdateNationality_ValidNationality_ReturnsOkResult()
@@ -117,6 +139,49 @@ namespace ControllersTests
         }
 
         [Fact]
+        public async Task UpdateNationality_InvalidId_ReturnsNotFoundResult()
+        {
+            // Arrange
+            int invalidNationalityId = -1;
+            var nationality = new Nationality
+            {
+                NationalityId = 1,
+                Country = "Test",
+                FlagSrc = "Test.png"
+            };
+
+            // Act
+            var result = await _controller.UpdateNationality(invalidNationalityId, nationality);
+
+            // Assert
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Nationality with the given Id doesn't exist in the database", notFoundResult.Value);
+
+        }
+
+        [Fact]
+        public async Task UpdateNationality_InvalidModel_ReturnsBadRequestResult()
+        {
+            // Arrange
+            int existingNationalityId = 1;
+            var nationality = new Nationality
+            {
+                NationalityId = 1,
+                Country = "T",
+                FlagSrc = "Test.png"
+            };
+
+            // Act
+            var validationResult = await _validator.TestValidateAsync(nationality);
+            var result = await _controller.UpdateNationality(existingNationalityId, nationality);
+
+            // Assert
+            validationResult.ShouldHaveValidationErrorFor(nationality => nationality.Country);
+            validationResult.Errors.ForEach(e => e.ErrorMessage.Contains("Minimum length of the country is 3 characters"));
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
         public async Task DeleteNationality_ExistingNationality_ReturnsNoContentResult()
         {
             // Arrange
@@ -130,5 +195,22 @@ namespace ControllersTests
             // Assert
             Assert.IsType<NoContentResult>(result);
         }
+
+        [Fact]
+        public async Task DeleteNationality_NonExistingNationality_ReturnsNotFoundResult()
+        {
+            // Arrange
+            int nonExistingNationalityId = 1999;
+
+            A.CallTo(() => _nationalityService.DeleteNationalityAsync(nonExistingNationalityId)).Returns(false);
+
+            // Act
+            var result = await _controller.DeleteNationality(nonExistingNationalityId);
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
+
+
     }
 }

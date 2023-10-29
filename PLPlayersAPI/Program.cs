@@ -5,6 +5,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using PLPlayersAPI.Data;
+using PLPlayersAPI.Models;
 using PLPlayersAPI.Models.DTOs;
 using PLPlayersAPI.Services.ClubServices;
 using PLPlayersAPI.Services.NationalityServices;
@@ -67,6 +68,9 @@ namespace PLPlayersAPI
             builder.Services.AddScoped<IUserService, UserService>();
 
             builder.Services.AddScoped<IValidator<UserDTO>, UserValidator>();
+            builder.Services.AddScoped<IValidator<Nationality>, NationalityValidator>();
+            builder.Services.AddScoped<IValidator<Club>, ClubValidator>();
+            builder.Services.AddScoped<IValidator<Position>, PositionValidator>();
 
             builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer(x =>
             {

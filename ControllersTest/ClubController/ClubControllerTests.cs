@@ -1,3 +1,5 @@
+using FluentValidation;
+using FluentValidation.TestHelper;
 using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.SignalR;
@@ -5,6 +7,8 @@ using PLPlayersAPI.Controllers;
 using PLPlayersAPI.Models;
 using PLPlayersAPI.Models.DTOs;
 using PLPlayersAPI.Services.ClubServices;
+using PLPlayersAPI.Services.PositionServices;
+using PLPlayersAPI.Validators;
 
 namespace ControllersTests
 {
@@ -12,11 +16,12 @@ namespace ControllersTests
     {
         private readonly IClubService _clubService;
         private readonly ClubController _controller;
-
+        private IValidator<Club> _validator;
         public ClubControllerTests()
         {
             _clubService = A.Fake<IClubService>();
-            _controller = new ClubController(_clubService);
+            _validator = new ClubValidator();
+            _controller = new ClubController(_clubService, _validator);
         }
 
         [Fact]
@@ -88,6 +93,22 @@ namespace ControllersTests
         }
 
         [Fact]
+        public async Task AddClub_InvalidModel_ReturnsBadRequestResult()
+        {
+            // Arrange
+            var club = new Club { ClubId = 1, BadgeSrc = "Test.png", Name = "T" };
+
+            // Act
+            var validationResult = await _validator.TestValidateAsync(club);
+            var result = await _controller.AddClub(club);
+
+            // Assert
+            validationResult.ShouldHaveValidationErrorFor(club => club.Name);
+            validationResult.Errors.ForEach(e => e.ErrorMessage.Contains("Minimum length of the country is 5 characters"));
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
         public async Task UpdateClub_ValidClub_ReturnsOkResult()
         {
             // Arrange
@@ -104,6 +125,39 @@ namespace ControllersTests
         }
 
         [Fact]
+        public async Task UpdateClub_InvalidId_ReturnsNotFoundResult()
+        {
+            // Arrange
+            int invalidClubId = -1;
+            var club = new Club { ClubId = 1, BadgeSrc = "Test.png", Name = "TestName" };
+
+            // Act
+            var result = await _controller.UpdateClub(invalidClubId, club);
+
+            // Assert
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Club with the given Id doesn't exist in the database", notFoundResult.Value);
+
+        }
+
+        [Fact]
+        public async Task UpdateClub_InvalidModel_ReturnsBadRequestResult()
+        {
+            // Arrange
+            int existingClubId = 1;
+            var club = new Club { ClubId = 1, BadgeSrc = "Test.png", Name = "T" };
+
+            // Act
+            var validationResult = await _validator.TestValidateAsync(club);
+            var result = await _controller.UpdateClub(existingClubId, club);
+
+            // Assert
+            validationResult.ShouldHaveValidationErrorFor(club => club.Name);
+            validationResult.Errors.ForEach(e => e.ErrorMessage.Contains("Club length of the position is 3 characters"));
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+        [Fact]
         public async Task DeleteClub_ExistingClub_ReturnsNoContentResult()
         {
             // Arrange
@@ -116,6 +170,21 @@ namespace ControllersTests
 
             // Assert
             Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task DeleteClub_NonExistingClub_ReturnsNotFoundResult()
+        {
+            // Arrange
+            int nonExistingClubId = 1999;
+
+            A.CallTo(() => _clubService.DeleteClubAsync(nonExistingClubId)).Returns(false);
+
+            // Act
+            var result = await _controller.DeleteClub(nonExistingClubId);
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(result);
         }
     }
 }

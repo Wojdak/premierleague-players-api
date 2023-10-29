@@ -1,7 +1,9 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PLPlayersAPI.Models;
+using PLPlayersAPI.Models.DTOs;
 using PLPlayersAPI.Services.PositionServices;
 
 namespace PLPlayersAPI.Controllers
@@ -11,10 +13,12 @@ namespace PLPlayersAPI.Controllers
     public class PositionController : ControllerBase
     {
         private readonly IPositionService _positionService;
+        private IValidator<Position> _validator;
 
-        public PositionController(IPositionService positionService)
+        public PositionController(IPositionService positionService, IValidator<Position> validator)
         {
             _positionService = positionService;
+            _validator = validator;
         }
 
         [HttpGet]
@@ -37,21 +41,35 @@ namespace PLPlayersAPI.Controllers
         [Authorize(Policy = "AdministratorPolicy")]
         public async Task<IActionResult> AddPosition([FromBody] Position position)
         {
-            var addedPositionId = await _positionService.AddPositionAsync(position);
+            var validationResult = await _validator.ValidateAsync(position);
 
-            return CreatedAtAction(nameof(AddPosition), new { id = addedPositionId }, $"Successfully added a new position with id: {addedPositionId}");
+            if (validationResult.IsValid)
+            {
+                var addedPositionId = await _positionService.AddPositionAsync(position);
+
+                return CreatedAtAction(nameof(AddPosition), new { id = addedPositionId }, $"Successfully added a new position with id: {addedPositionId}");
+            }
+
+            return BadRequest(validationResult.Errors);
         }
 
         [HttpPut("{id}")]
         [Authorize(Policy = "AdministratorPolicy")]
         public async Task<IActionResult> UpdatePosition(int id, [FromBody] Position position)
         {
-            var updatedPositionId = await _positionService.UpdatePositionAsync(id, position);
+            var validationResult = await _validator.ValidateAsync(position);
 
-            if (updatedPositionId is null)
-                return NotFound("Position with the given Id doesn't exist in the database");
+            if (validationResult.IsValid)
+            {
+                var updatedPositionId = await _positionService.UpdatePositionAsync(id, position);
 
-            return Ok($"Successfully updated the position with id: {updatedPositionId}");
+                if (updatedPositionId is null)
+                    return NotFound("Position with the given Id doesn't exist in the database");
+
+                return Ok($"Successfully updated the position with id: {updatedPositionId}");
+            }
+
+            return BadRequest(validationResult.Errors);
         }
 
         [HttpDelete("{id}")]

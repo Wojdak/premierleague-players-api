@@ -135,5 +135,81 @@ namespace ControllersTests
             var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
             Assert.Equal("Player with the given Id doesn't exist in the database", notFoundResult.Value);
         }
+
+        [Fact]
+        public async Task UpdateClub_ValidClub_ReturnsOkResult()
+        {
+            // Arrange
+            var player = new Player
+            {
+                PlayerId = 1,
+                FirstName = "Test",
+                LastName = "Name",
+                DateOfBirth = DateTime.Now,
+                ImgSrc = "Test image.png"
+            };
+
+            A.CallTo(() => _playerService.UpdatePlayerAsync(player.PlayerId, player)).Returns(player.PlayerId);
+
+            // Act
+            var result = await _controller.UpdatePlayer(player.PlayerId, player);
+
+            // Assert
+            var okResult = Assert.IsType<OkObjectResult>(result);
+            Assert.Equal($"Successfully updated the player with id: {player.PlayerId}", okResult.Value);
+        }
+
+        [Fact]
+        public async Task UpdateClub_InvalidId_ReturnsNotFoundResult()
+        {
+            // Arrange
+            int invalidPlayerId = -1;
+            var player = new Player
+            {
+                PlayerId = 1,
+                FirstName = "Test",
+                LastName = "Name",
+                DateOfBirth = DateTime.Now,
+                ImgSrc = "Test image.png"
+            };
+
+            // Act
+            var result = await _controller.UpdatePlayer(invalidPlayerId, player);
+
+            // Assert
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Player with the given Id doesn't exist in the database", notFoundResult.Value);
+
+        }
+
+        [Fact]
+        public async Task DeletePlayer_ExistingPlayer_ReturnsNoContentResult()
+        {
+            // Arrange
+            int existingPlayerId = 1;
+
+            A.CallTo(() => _playerService.DeletePlayerAsync(existingPlayerId)).Returns(true);
+
+            // Act
+            var result = await _controller.DeletePlayer(existingPlayerId);
+
+            // Assert
+            Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task DeleteClub_NonExistingClub_ReturnsNotFoundResult()
+        {
+            // Arrange
+            int nonExistingPlayerId = 1999;
+
+            A.CallTo(() => _playerService.DeletePlayerAsync(nonExistingPlayerId)).Returns(false);
+
+            // Act
+            var result = await _controller.DeletePlayer(nonExistingPlayerId);
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(result);
+        }
     }
 }

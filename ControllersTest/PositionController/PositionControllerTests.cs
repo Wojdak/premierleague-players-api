@@ -1,8 +1,11 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using FluentValidation;
+using FluentValidation.TestHelper;
+using Microsoft.AspNetCore.Mvc;
 using PLPlayersAPI.Controllers;
 using PLPlayersAPI.Models;
 using PLPlayersAPI.Models.DTOs;
 using PLPlayersAPI.Services.PositionServices;
+using PLPlayersAPI.Validators;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -15,11 +18,12 @@ namespace ControllersTests
     {
         private readonly IPositionService _positionService;
         private readonly PositionController _controller;
-
+        private IValidator<Position> _validator;
         public PositionControllerTests()
         {
             _positionService = A.Fake<IPositionService>();
-            _controller = new PositionController(_positionService);
+            _validator = new PositionValidator();
+            _controller = new PositionController(_positionService, _validator);
         }
 
         [Fact]
@@ -78,7 +82,7 @@ namespace ControllersTests
         public async Task AddPosition_ValidPosition_ReturnsCreatedAtActionResult()
         {
             // Arrange
-            var position = new Position { PositionId = 1, Name = "test" };
+            var position = new Position { PositionId = 1, Name = "testPosition" };
 
             A.CallTo(() => _positionService.AddPositionAsync(position)).Returns(position.PositionId);
 
@@ -91,10 +95,27 @@ namespace ControllersTests
         }
 
         [Fact]
-        public async Task UpdatePosition_ValidPosition_ReturnsOkResult()
+        public async Task AddNationality_InvalidModel_ReturnsBadRequestResult()
         {
             // Arrange
             var position = new Position { PositionId = 1, Name = "test" };
+
+            // Act
+            var validationResult = await _validator.TestValidateAsync(position);
+            var result = await _controller.AddPosition(position);
+
+            // Assert
+            validationResult.ShouldHaveValidationErrorFor(position => position.Name);
+            validationResult.Errors.ForEach(e => e.ErrorMessage.Contains("Minimum length of the country is 5 characters"));
+            Assert.IsType<BadRequestObjectResult>(result);
+        }
+
+
+        [Fact]
+        public async Task UpdatePosition_ValidPosition_ReturnsOkResult()
+        {
+            // Arrange
+            var position = new Position { PositionId = 1, Name = "testPosition" };
 
             A.CallTo(() => _positionService.UpdatePositionAsync(position.PositionId, position)).Returns(position.PositionId);
 
@@ -104,6 +125,39 @@ namespace ControllersTests
             // Assert
             var okResult = Assert.IsType<OkObjectResult>(result);
             Assert.Equal($"Successfully updated the position with id: {position.PositionId}", okResult.Value);
+        }
+
+        [Fact]
+        public async Task UpdatePosition_InvalidId_ReturnsNotFoundResult()
+        {
+            // Arrange
+            int invalidPositionId = -1;
+            var position = new Position { PositionId = 1, Name = "testPosition" };
+
+            // Act
+            var result = await _controller.UpdatePosition(invalidPositionId, position);
+
+            // Assert
+            var notFoundResult = Assert.IsType<NotFoundObjectResult>(result);
+            Assert.Equal("Position with the given Id doesn't exist in the database", notFoundResult.Value);
+
+        }
+
+        [Fact]
+        public async Task UpdatePosition_InvalidModel_ReturnsBadRequestResult()
+        {
+            // Arrange
+            int existingPositionId = 1;
+            var position = new Position { PositionId = 1, Name = "t" };
+
+            // Act
+            var validationResult = await _validator.TestValidateAsync(position);
+            var result = await _controller.UpdatePosition(existingPositionId, position);
+
+            // Assert
+            validationResult.ShouldHaveValidationErrorFor(position => position.Name);
+            validationResult.Errors.ForEach(e => e.ErrorMessage.Contains("Minimum length of the position is 5 characters"));
+            Assert.IsType<BadRequestObjectResult>(result);
         }
 
         [Fact]
@@ -119,6 +173,21 @@ namespace ControllersTests
 
             // Assert
             Assert.IsType<NoContentResult>(result);
+        }
+
+        [Fact]
+        public async Task DeletePosition_NonExistingPosition_ReturnsNotFoundResult()
+        {
+            // Arrange
+            int nonExistingPositionId = 1999;
+
+            A.CallTo(() => _positionService.DeletePositionAsync(nonExistingPositionId)).Returns(false);
+
+            // Act
+            var result = await _controller.DeletePosition(nonExistingPositionId);
+
+            // Assert
+            Assert.IsType<NotFoundObjectResult>(result);
         }
     }
 }

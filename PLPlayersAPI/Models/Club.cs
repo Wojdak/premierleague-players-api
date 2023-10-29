@@ -7,7 +7,7 @@ public partial class Club
 {
     public int ClubId { get; set; }
 
-    public string? Name { get; set; }
+    public string Name { get; set; } = null!;
 
     public string? BadgeSrc { get; set; }
 

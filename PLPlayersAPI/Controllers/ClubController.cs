@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Authorization;
+﻿using FluentValidation;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using PLPlayersAPI.Models;
@@ -11,10 +12,11 @@ namespace PLPlayersAPI.Controllers
     public class ClubController : ControllerBase
     {
         private readonly IClubService _clubService;
-
-        public ClubController(IClubService clubService)
+        private IValidator<Club> _validator;
+        public ClubController(IClubService clubService, IValidator<Club> validator)
         {
             _clubService = clubService;
+            _validator = validator;
         }
 
         [HttpGet]
@@ -37,21 +39,35 @@ namespace PLPlayersAPI.Controllers
         [Authorize(Policy = "AdministratorPolicy")]
         public async Task<IActionResult> AddClub([FromBody] Club club)
         {
-            var addedClubId = await _clubService.AddClubAsync(club);
+            var validationResult = await _validator.ValidateAsync(club);
 
-            return CreatedAtAction(nameof(AddClub), new { id = addedClubId }, $"Successfully added a new club with id: {addedClubId}");
+            if (validationResult.IsValid)
+            {
+                var addedClubId = await _clubService.AddClubAsync(club);
+
+                return CreatedAtAction(nameof(AddClub), new { id = addedClubId }, $"Successfully added a new club with id: {addedClubId}");
+            }
+
+            return BadRequest(validationResult.Errors);
         }
 
         [HttpPut("{id}")]
         [Authorize(Policy = "AdministratorPolicy")]
         public async Task<IActionResult> UpdateClub(int id, [FromBody] Club club)
         {
-            var updatedClubId = await _clubService.UpdateClubAsync(id, club);
+            var validationResult = await _validator.ValidateAsync(club);
 
-            if (updatedClubId is null)
-                return NotFound("Club with the given Id doesn't exist in the database");
+            if (validationResult.IsValid)
+            {
+                var updatedClubId = await _clubService.UpdateClubAsync(id, club);
 
-            return Ok($"Successfully updated the club with id: {updatedClubId}");
+                if (updatedClubId is null)
+                    return NotFound("Club with the given Id doesn't exist in the database");
+
+                return Ok($"Successfully updated the club with id: {updatedClubId}");
+            }
+
+            return BadRequest(validationResult.Errors);
         }
 
         [HttpDelete("{id}")]
