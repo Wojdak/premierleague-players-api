@@ -21,7 +21,7 @@
             HasPrevious = CurrentPage > 1;
             HasNext = CurrentPage < TotalPages;
 
-            AddRange(data.Skip((CurrentPage - 1) * PageSize).Take(PageSize));
+            AddRange(data);
         }
     }
 

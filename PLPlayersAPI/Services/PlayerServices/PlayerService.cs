@@ -21,24 +21,25 @@ namespace PLPlayersAPI.Services.PlayerServices
 
         public async Task<PagedResponse<PlayerDTO>?> GetAllPlayersAsync(PaginationFilter paginationFilters, PlayerFilter playerFilter)
         {
-            var filteredQuery = BuildFilteredQuery(playerFilter);
-            if (filteredQuery is null) return null;
-
             var validPagination = new PaginationFilter(paginationFilters.PageNumber, paginationFilters.PageSize);
+
+            var filteredQuery = BuildFilteredQuery(playerFilter, paginationFilters);
+            if (filteredQuery is null) return null;
 
             var players = await filteredQuery.ToListAsync();
             var playerDTOs = players.Select(_mapper.Map<Player, PlayerDTO>).ToList();
 
+
             return new PagedResponse<PlayerDTO>(playerDTOs, playerDTOs.Count, validPagination.PageNumber, validPagination.PageSize);
         }
 
-        private IQueryable<Player> BuildFilteredQuery(PlayerFilter playerFilter)
+        private IQueryable<Player> BuildFilteredQuery(PlayerFilter playerFilter, PaginationFilter paginationFilters)
         {
             var query = _context.Players
-                .Include(p => p.Nationality)
-                .Include(p => p.Club)
-                .Include(p => p.Position)
-                .AsQueryable();
+               .Include(p => p.Nationality)
+               .Include(p => p.Club)
+               .Include(p => p.Position)
+               .AsQueryable();
 
             if (!string.IsNullOrEmpty(playerFilter.Country))
                 query = query.Where(p => p.Nationality.Country == playerFilter.Country);
@@ -49,8 +50,13 @@ namespace PLPlayersAPI.Services.PlayerServices
             if (!string.IsNullOrEmpty(playerFilter.Position))
                 query = query.Where(p => p.Position.Name == playerFilter.Position);
 
+            // Apply pagination
+            query = query.Skip((paginationFilters.PageNumber - 1) * paginationFilters.PageSize)
+                         .Take(paginationFilters.PageSize);
+
             return query.Any() ? query : null;
         }
+
 
 
         public async Task<PlayerDTO?> GetPlayerByIdAsync(int playerId)
