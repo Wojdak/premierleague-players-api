@@ -1,0 +1,40 @@
+name: Test and Publish Docker Image
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v2
+
+      - name: Setup .NET Core
+        uses: actions/setup-dotnet@v1
+        with:
+          dotnet-version: '7.0.0'
+
+      - name: Restore Dependencies
+        run: dotnet restore
+
+      - name: Build and Test
+        run: dotnet test
+        
+  publish:
+    runs-on: ubuntu-latest
+    needs: test
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3
+
+      - name: Build and Push the Image
+        run : |
+          docker login --username ${{ github.actor }} --password ${{ secrets.GH_PT}} ghcr.io
+          docker build . --tag ghcr.io/wojdak/pl-players-api:latest --build-arg ConnectionStrings__PremierLeagueDatabase="${{ secrets.PREMIERLEAGUEDATABASECONNECTION }}"  --build-arg Jwt__Key="${{ secrets.JWTKEY }}" --build-arg Jwt__Issuer="${{ secrets.JWTISSUER }}" --build-arg Jwt__Audience="${{ secrets.JWTAUDIENCE }}"
+          docker push ghcr.io/wojdak/pl-players-api:latest 
+  
