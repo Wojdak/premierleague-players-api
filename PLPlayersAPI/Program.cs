@@ -96,6 +96,8 @@ namespace PLPlayersAPI
             
             var app = builder.Build();
 
+            app.UseStaticFiles();
+
             app.MapHealthChecks("/health");
 
             // Configure the HTTP request pipeline.

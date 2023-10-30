@@ -1,0 +1,267 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Football Players API Documentation</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+    <header>
+        <div>
+            <h1>Football Players API</h1>
+            <p>
+                The API offers information on players, clubs, nationalities, and positions from the English
+                Premier League. <br> Hosted on an AWS EC2 instance as a Docker container, it uses AWS RDS for data storage.
+            </p>
+        </div>
+    </header>
+
+    <section id="players">
+        <div>
+            <h2>Players</h2>
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Endpoint</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Get Players</strong></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>URL: /api/players</td>
+                            <td>Method: GET<br>Parameters: paginationFilters, playerFilter<br>Response: 200 OK with list
+                                of players<br>404 Not Found if no data is found in the database</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Get Player by ID</strong></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>URL: /api/players/{id}</td>
+                            <td>Method: GET<br>Parameters: id (int): Unique identifier of the player<br>Response: 200 OK
+                                with player details<br>404 Not Found if player with the given ID doesn't exist in the
+                                database</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3>Pagination Headers</h3>
+            <p>The GetPlayers endpoint supports pagination. The following pagination headers will be included in the
+                response:</p>
+            <ul>
+                <li>CurrentPage: Current page number (1 by default).</li>
+                <li>PageSize: Number of items per page (10 by default).</li>
+                <li>TotalRecords: Total number of records.</li>
+                <li>TotalPages: Total number of pages.</li>
+                <li>HasPrevious: Indicates (true) if there's a previous page.</li>
+                <li>HasNext: Indicates (true) if there's a next page.</li>
+            </ul>
+            <pre>
+            Pagination: {"CurrentPage":1,"PageSize":5,"TotalRecords":5,"TotalPages":1,"HasPrevious":false,"HasNext":false}
+        </pre>
+
+            <h3>Player Filter</h3>
+            <p>The playerFilter parameter allows you to filter players based on specific criteria. Available filter
+                options include:</p>
+            <ul>
+                <li>country: Filter players by country.</li>
+                <li>club: Filter players by club.</li>
+                <li>position: Filter players by position.</li>
+            </ul>
+
+            <h3>Example Usage</h3>
+            <pre>
+                <span>GET </span><a href="https://football-players.online/api/players">https://football-players.online/api/players</a><br>
+                <span>GET </span><a href="https://football-players.online/api/players?Club=Everton">https://football-players.online/api/players?Club=Everton</a><br>
+                <span>GET </span><a href="https://football-players.online/api/players?PageNumber=2&PageSize=5&Country=England&Position=Forward">https://football-players.online/api/players?PageNumber=2&PageSize=5&Country=England&Position=Forward</a><br>
+                <span>GET </span><a href="https://football-players.online/api/players/182">https://football-players.online/api/players/182</a>
+            </pre>
+
+            <h3>Return format</h3>
+            <pre>
+                {
+                    <span class="property">"playerId":</span> <span class="value">182,</span>
+                    <span class="property">"firstName":</span> <span class="value">"Mike",</span>
+                    <span class="property">"lastName":</span> <span class="value">"Trésor",</span>
+                    <span class="property">"imgSrc":</span> <span class="value">"https://resources.premierleague.com/premierleague/photos/players/250x250/p437748.png",</span>
+                    <span class="property">"dateOfBirth":</span> <span class="value">"1999-05-28",</span>
+                    <span class="property">"club":</span> {
+                        <span class="property">"clubId":</span> <span class="value">10,</span>
+                        <span class="property">"name":</span> <span class="value">"Burnley",</span>
+                        <span class="property">"badgeSrc":</span> <span class="value">"https://resources.premierleague.com/premierleague/badges/t90.png"</span>
+                    },
+                    <span class="property">"nationality":</span> {
+                        <span class="property">"nationalityId":</span> <span class="value">6,</span>
+                        <span class="property">"country":</span> <span class="value">"Belgium",</span>
+                        <span class="property">"flagSrc":</span> <span class="value">"https://resources.premierleague.com/premierleague/flags/BE.png"</span>
+                    },
+                    <span class="property">"position":</span> {
+                        <span class="property">"positionId":</span> <span class="value">4,</span>
+                        <span class="property">"name":</span> <span class="value">"Forward"</span>
+                    }
+                }
+            </pre>
+    </section>
+
+    <section id="clubs">
+        <div>
+            <h2>Clubs</h2>
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Endpoint</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Get Clubs</strong></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>URL: /api/clubs</td>
+                            <td>Method: GET<br>Response: 200 OK with list of clubs<br>404 Not Found if no data is found
+                                in the database</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Get Club by ID</strong></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>URL: /api/clubs/{id}</td>
+                            <td>Method: GET<br>Parameters: id (int): Unique identifier of the club<br>Response: 200 OK
+                                with club details<br>404 Not Found if club with the given ID doesn't exist in the
+                                database</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3>Example Usage</h3>
+
+            <pre>
+                <span>GET </span><a href="https://football-players.online/api/clubs">https://football-players.online/api/clubs</a>
+                <span>GET </span><a href="https://football-players.online/api/clubs/24">https://football-players.online/api/clubs/24</a>
+            </pre>
+
+            <h3>Return format</h3>
+            <pre>
+                {
+                "clubId": 24,
+                "name": "Manchester United",
+                "badgeSrc": "https://resources.premierleague.com/premierleague/badges/t1.png"
+                }
+            </pre>
+    </section>
+
+    <section id="nationalities">
+        <div>
+            <h2>Nationalities</h2>
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Endpoint</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Get Nationalities</strong></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>URL: /api/nationalities</td>
+                            <td>Method: GET<br>Response: 200 OK with list of nationalities<br>404 Not Found if no data
+                                is found in the database</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Get Nationality by ID</strong></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>URL: /api/nationalities/{id}</td>
+                            <td>Method: GET<br>Parameters: id (int): Unique identifier of the nationality<br>Response:
+                                200 OK with nationality details<br>404 Not Found if nationality with the given ID
+                                doesn't exist in the database</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3>Example Usage</h3>
+            <pre>
+                <span>GET </span><a href="https://football-players.online/api/nationalities">https://football-players.online/api/nationalities</a>
+                <span>GET </span><a href="https://football-players.online/api/nationalities/3">https://football-players.online/api/nationalities/3</a>
+            </pre>
+
+            <h3>Return format</h3>
+            <pre>
+                {
+                "nationalityId": 3,
+                "country": "Argentina",
+                "flagSrc": "https://resources.premierleague.com/premierleague/flags/AR.png"
+                }
+            </pre>
+    </section>
+
+    <section id="positions">
+        <div>
+            <h2>Positions</h2>
+            <div>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Endpoint</th>
+                            <th>Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td><strong>Get Positions</strong></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>URL: /api/positions</td>
+                            <td>Method: GET<br>Response: 200 OK with list of positions<br>404 Not Found if no positions
+                                are found in the database</td>
+                        </tr>
+                        <tr>
+                            <td><strong>Get Position by ID</strong></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>URL: /api/positions/{id}</td>
+                            <td>Method: GET<br>Parameters: id (int): Unique identifier of the position<br>Response: 200
+                                OK with position details<br>404 Not Found if position with the given ID doesn't exist in
+                                the database</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <h3>Example Usage</h3>
+            <pre>
+                <span>GET</span> <a href="https://football-players.online/api/positions">https://football-players.online/api/positions</a>
+                <span>GET</span> <a href="https://football-players.online/api/positions/1">https://football-players.online/api/positions/1</a>
+            </pre>
+
+            <h3>Return format</h3>
+            <pre>
+                {
+                "positionId": 1,
+                "name": "Goalkeeper"
+                }
+            </pre>
+    </section>
+
+</body>
+
+</html>
