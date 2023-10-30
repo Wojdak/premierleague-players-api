@@ -12,6 +12,7 @@ namespace PLPlayersAPI.Services.PlayerServices
     {
         private readonly AppDbContext _context;
         private readonly IMapper _mapper;
+        private int playersCount;
 
         public PlayerService(AppDbContext dbContext, IMapper mapper)
         {
@@ -30,7 +31,7 @@ namespace PLPlayersAPI.Services.PlayerServices
             var playerDTOs = players.Select(_mapper.Map<Player, PlayerDTO>).ToList();
 
 
-            return new PagedResponse<PlayerDTO>(playerDTOs, playerDTOs.Count, validPagination.PageNumber, validPagination.PageSize);
+            return new PagedResponse<PlayerDTO>(playerDTOs, playersCount, validPagination.PageNumber, validPagination.PageSize);
         }
 
         private IQueryable<Player> BuildFilteredQuery(PlayerFilter playerFilter, PaginationFilter paginationFilters)
@@ -50,14 +51,14 @@ namespace PLPlayersAPI.Services.PlayerServices
             if (!string.IsNullOrEmpty(playerFilter.Position))
                 query = query.Where(p => p.Position.Name == playerFilter.Position);
 
+            playersCount = query.Count();
+
             // Apply pagination
             query = query.Skip((paginationFilters.PageNumber - 1) * paginationFilters.PageSize)
                          .Take(paginationFilters.PageSize);
 
             return query.Any() ? query : null;
         }
-
-
 
         public async Task<PlayerDTO?> GetPlayerByIdAsync(int playerId)
         {
