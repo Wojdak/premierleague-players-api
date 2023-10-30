@@ -5,6 +5,9 @@ COPY . .
 RUN dotnet restore "./PLPlayersAPI/PLPlayersAPI.csproj" --disable-parallel
 RUN dotnet publish "./PLPlayersAPI/PLPlayersAPI.csproj" -c release -o /app --no-restore
 
+# Copy wwwroot to image
+COPY ./PLPlayersAPI/wwwroot /app/wwwroot
+
 # Serve Stage
 FROM mcr.microsoft.com/dotnet/aspnet:7.0
 WORKDIR /app
