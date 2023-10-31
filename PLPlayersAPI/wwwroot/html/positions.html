@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/x-icon" href="img/favicon.ico">
+    <title>Football Players API</title>
+    <link rel="stylesheet" href="../style.css">
+
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-dark text-white ">
+        <div class="container-fluid">
+          <a class="navbar-brand text-white " href="../index.html">Football Players API</a>
+          <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo02" aria-controls="navbarTogglerDemo02" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon text-white"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="navbarTogglerDemo02">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                  <a class="nav-link text-white " href="players.html">Players</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-white " href="clubs.html">Clubs</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-white " href="nationalities.html">Nationalities</a>
+                </li>
+                <li class="nav-item">
+                  <a class="nav-link text-white " href="positions.html">Positions</a>
+                </li>
+              </ul>
+
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item d-flex align-items-center">
+                    <a class="nav-link text-white" href="https://github.com/Wojdak/premierleague-players-api"> 
+                        <img src="../img/GitHub_Logo_White.png" alt="GitHub logo" class="github-logo">
+                    </a>
+                </li>
+            </ul>
+            
+
+          </div>
+        </div>
+      </nav>
+
+      <div class="container mt-4" id="content">
+        <div id="players">
+          <h4>Clubs</h4>
+      
+          <div class="endpoint mt-3 d-flex align-items-center border border-success" data-bs-toggle="collapse" data-bs-target="#collapse-box-1">
+              <span class="get-method bg-success text-white text-center m-1 py-1">GET</span> 
+              <span class="path">/api/positions</span>
+              <span class="desc d-none d-md-inline">Get a list of positions</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="ms-auto bi bi-arrow-down-square" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+              </svg>
+          </div>
+      
+          <div class="collapse" id="collapse-box-1">
+            <p class="desc d-md-none">Get a list of positions</p>
+              <div class="card card-body">
+                  <h5>Resposne Format</h5>
+                  <pre>
+{
+    "positionId": <span class="text-danger">1,</span>
+    "name": <span class="text-danger">"Goalkeeper"</span>
+},
+{
+    "positionId": <span class="text-danger">2,</span>
+    "name": <span class="text-danger">"Defender"</span>
+}                 
+                  </pre>
+      
+                  <h5>Response Code</h5>
+                  <p>
+                      <span class="status-code text-success">200 OK</span> - with list of positions<br>
+                  </p>
+              </div>
+          </div>
+      
+      
+      
+          <div class="endpoint mt-3 d-flex align-items-center border border-success" data-bs-toggle="collapse" data-bs-target="#collapse-box-2">
+              <span class="get-method bg-success text-white text-center m-1 py-1">GET</span> 
+              <span class="path">/api/positions/{positionId}</span>
+              <span class="desc d-none d-md-inline">Get a position with the given ID</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="ms-auto bi bi-arrow-down-square" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+              </svg>
+          </div>
+      
+          <div class="collapse" id="collapse-box-2">
+            <p class="desc d-md-none">Get a position with the given ID</p>
+              <div class="card card-body">
+                  <h5>Parameters</h5>
+                  <ul>
+                      <li>positionId (int): Unique identifier of the position</li>
+                  </ul>
+      
+                  <h5>Example Usage</h5>
+                  <pre>
+<span class="text-success">GET</span> <span class="text-primary">/api/positions/2</span>
+                  </pre>
+      
+                  <h5>Response Format</h5>
+                  <pre>
+{
+    "positionId": <span class="text-danger">2,</span>
+    "name": <span class="text-danger">"Defender"</span>
+} 
+                  </pre>
+      
+                  <h5>Response Codes</h5>
+                  <p>
+                      <span class="status-code text-success">200 OK</span> - with one position<br>
+                      <span class="status-code text-danger">404 Not Found</span> - if position with the given ID doesn't exist in the database
+                  </p>
+              </div>
+          </div>
+      
+          <div class="endpoint mt-3 d-flex align-items-center border-post-method" data-bs-toggle="collapse" data-bs-target="#collapse-box-3">
+              <span class="post-method text-white text-center m-1 py-1">POST</span> 
+              <span class="path">/api/positions</span>
+              <span class="desc d-none d-md-inline">Add new position</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="ms-auto bi bi-arrow-down-square" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+              </svg>
+          </div>
+      
+          <div class="collapse" id="collapse-box-3">
+            <span class="desc d-md-none">Add new position</span>
+              <div class="card card-body">
+                  <h5>Authorization (JWT Token) Required</h5>
+                  <p>This endpoint is only available for authorized users</p>
+      
+                  <h5>Validation Rules</h5>
+                  <ul>
+                    <li>Minimum length of the position name is 5 characters</li>
+                  </ul>
+
+                  <h5>Request Body</h5>
+      
+                  <pre>
+{
+    "name": <span class="text-danger">"string"</span>
+}           
+                  </pre>
+      
+                  <h5>Response Format</h5>
+                  <p>Successfully added a new position with id: {positionId}</p>
+      
+                  <h5>Response Codes</h5>
+                  <p>
+                      <span class="status-code text-success">201 Created</span> - with a response message<br>
+                      <span class="status-code text-danger">400 Bad Request</span> - if position didn't pass validation
+                  </p>
+      
+              </div>
+          </div>
+      
+          <div class="endpoint mt-3 d-flex align-items-center border-put-method" data-bs-toggle="collapse" data-bs-target="#collapse-box-4">
+              <span class="update-method text-white text-center m-1 py-1">PUT</span>
+              <span class="path">/api/positions/{positionId}</span>
+              <span class="desc d-none d-md-inline">Update existing position</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="ms-auto bi bi-arrow-down-square" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+              </svg>
+          </div>
+      
+          <div class="collapse" id="collapse-box-4">
+            <span class="desc d-md-none">Update existing position</span>
+              <div class="card card-body">
+
+                  <h5>Authorization (JWT Token) Required</h5>
+                  <p>This endpoint is only available for authorized users</p>
+      
+                  <h5>Parameters</h5>
+                  <ul>
+                      <li>positionId (int): Unique identifier of the position</li>
+                  </ul>
+      
+                  <h5>Validation Rules</h5>
+                  <ul>
+                    <li>Minimum length of the position name is 5 characters</li>
+                  </ul>
+                  
+
+                  <h5>Example Usage</h5>
+                  <pre>
+<span style="color: #ec921c;">PUT</span> <span class="text-primary">/api/positions/2</span>
+                  </pre>
+      
+                  <h5>Request Body</h5>
+      
+                  <pre>
+{
+    "name": <span class="text-danger">"string"</span>
+}                         
+                  </pre>
+      
+
+                  <h5>Response Format</h5>
+                  <p>Successfully updated the position with id: {updatedPositionId}</p>
+      
+                  <h5>Response Codes</h5>
+                  <p>
+                      <span class="status-code text-success">200 OK</span> - with a response message<br>
+                      <span class="status-code text-danger">404 Not Found</span> - if position with the given ID doesn't exist in the database<br>
+                      <span class="status-code text-danger">400 Bad Request</span> - if position didn't pass validation
+                  </p>
+      
+              </div>
+          </div>
+      
+          <div class="endpoint mt-3 d-flex align-items-center border border-danger" data-bs-toggle="collapse" data-bs-target="#collapse-box-5">
+              <span class="delete-method bg-danger text-white text-center m-1 py-1">DELETE</span> 
+              <span class="path">/api/positions/{positionId}</span>
+              <span class="desc d-none d-md-inline">Delete position with the given ID</span>
+              <svg xmlns="http://www.w3.org/2000/svg" width="25" height="25" fill="currentColor" class="ms-auto bi bi-arrow-down-square" viewBox="0 0 16 16">
+                  <path fill-rule="evenodd" d="M15 2a1 1 0 0 0-1-1H2a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2zM0 2a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2zm8.5 2.5a.5.5 0 0 0-1 0v5.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V4.5z"/>
+              </svg>
+          </div>
+      
+          <div class="collapse" id="collapse-box-5">
+            <p class="desc d-md-none">Delete position with the given ID</p>
+              <div class="card card-body">
+
+                  <h5>Authorization (JWT Token) Required</h5>
+                  <p>This endpoint is only available for authorized users</p>
+      
+                  <h5>Parameters</h5>
+                  <ul>
+                      <li>positionId (int): Unique identifier of the position</li>
+                  </ul>
+      
+                  <h5>Example Usage</h5>
+                  <pre>
+<span class="text-danger">DELETE</span> <span class="text-primary">/api/positions/2</span>
+                  </pre>
+      
+                  <h5>Response Codes</h5>
+                  <p>
+                      <span class="status-code text-success">204 No Content</span><br>
+                      <span class="status-code text-danger">404 Not Found</span> - if position with the given ID doesn't exist in the database
+                  </p>
+      
+              </div>
+          </div>
+          
+         
+        </div>
+      
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+</body>
+</html>
