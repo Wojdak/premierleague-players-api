@@ -2,6 +2,9 @@
 
 The API offers information on players, clubs, nationalities, and positions from the English Premier League. Hosted on an AWS EC2 instance as a Docker container, it uses AWS RDS for data storage.
 
+## Live Demo
+https://football-players.azurewebsites.net/
+
 # Endpoints documentation
  
 ## Players
