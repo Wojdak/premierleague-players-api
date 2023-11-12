@@ -71,6 +71,15 @@ nav {
     color: #EFEFEF;
 }
 
+#database-message {
+    margin-top: 1%;
+    font-size: 0.8rem;
+}
+
+#database-message span {
+    font-weight: 800;
+}
+
 
 @media (max-width: 767px) {
     .buttons {

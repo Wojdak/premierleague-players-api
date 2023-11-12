@@ -46,23 +46,27 @@
       </nav>
 
       <div class="container mt-4" id="content">
-        <div id="players" class="text-center">
-            <h1>Football Players API</h1>
-            <p>
-                The API offers information on players, clubs, nationalities, and positions from the English
-                Premier League. <br> Deployed as an Azure Web App, it uses Azure SQL Database for data storage.
-            </p>
+          <div id="players" class="text-center">
+              <h1>Football Players API</h1>
+              <p>
+                  The API offers information on players, clubs, nationalities, and positions from the English
+                  Premier League. <br> Deployed as an Azure Web App, it uses Azure SQL Database for data storage.
+              </p>
 
-            <h4>Available resources:</h4>
+              <p id="database-message">
+                  <span>*</span>The initial request may take longer than expected due to the serverless nature of the database, which pauses when not in use for an extended period.
+              </p>
 
-            <div class="buttons d-flex justify-content-center">
-              <a href="./html/players.html"><button class="btn m-1 p-2">Players</button></a>
-              <a href="./html/clubs.html"><button class="btn m-1 p-2">Clubs</button></a>
-              <a href="./html/nationalities.html"><button class="btn m-1 p-2">Nationalities</button></a>
-              <a href="./html/positions.html"><button class="btn m-1 p-2">Positions</button></a>
-            </div>
-            
-        </div>
+              <h4>Available resources:</h4>
+
+              <div class="buttons d-flex justify-content-center">
+                  <a href="./html/players.html"><button class="btn m-1 p-2">Players</button></a>
+                  <a href="./html/clubs.html"><button class="btn m-1 p-2">Clubs</button></a>
+                  <a href="./html/nationalities.html"><button class="btn m-1 p-2">Nationalities</button></a>
+                  <a href="./html/positions.html"><button class="btn m-1 p-2">Positions</button></a>
+              </div>
+
+          </div>
       
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
