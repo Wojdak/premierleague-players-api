@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using AutoMapper;
 using PLPlayersAPI.Data;
 using PLPlayersAPI.Models;
 using PLPlayersAPI.Models.DTOs;
@@ -15,6 +16,7 @@ using PLPlayersAPI.Services.UserServices;
 using PLPlayersAPI.Validators;
 using System.Security.Claims;
 using System.Text;
+using PLPlayersAPI.Mapper;
 
 namespace PLPlayersAPI
 {
@@ -59,7 +61,14 @@ namespace PLPlayersAPI
             builder.Services.AddDbContext<AppDbContext>(options =>
                    options.UseSqlServer(builder.Configuration.GetConnectionString("PremierLeagueDatabase")));
 
-            builder.Services.AddAutoMapper(typeof(Program));
+            // builder.Services.AddAutoMapper(typeof(Program));
+
+            // Add AutoMapper manually
+            builder.Services.AddSingleton(provider => new MapperConfiguration(cfg =>
+            {
+                cfg.AddProfile<AutoMapperProfile>(); // Add your profiles here
+            }).CreateMapper());
+
 
             builder.Services.AddScoped<IPlayerService, PlayerService>();
             builder.Services.AddScoped<IClubService, ClubService>();
