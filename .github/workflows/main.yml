@@ -35,4 +35,18 @@ jobs:
           docker login --username ${{ github.actor }} --password ${{ secrets.GH_PT}} ghcr.io
           docker build --tag ghcr.io/wojdak/pl-players-api:latest --build-arg ConnectionStrings__PremierLeagueDatabase="${{secrets.PREMIERLEAGUEDATABASECONNECTION}}"  --build-arg Jwt__Key="${{secrets.JWTKEY}}" --build-arg Jwt__Issuer="${{secrets.JWTISSUER}}" --build-arg Jwt__Audience="${{secrets.JWTAUDIENCE}}" .
           docker push ghcr.io/wojdak/pl-players-api:latest 
-  
+
+  deploy:
+    runs-on: ubuntu-latest
+    needs: publish
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4.1.1
+        
+      - name: Deploy to Azure Web App
+        uses: Azure/webapps-deploy@v3.0.1
+        with:
+          app-name: ${{ secrets.AZURE_WEBAPP_NAME }}
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          images: ghcr.io/wojdak/pl-players-api:latest
